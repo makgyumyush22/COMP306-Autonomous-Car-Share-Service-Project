@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h2>Cars</h2>
+    <label>
+      Enter User ID:
+      <input type="number" v-model.number="userId" />
+    </label>
 
     <!-- Lat/Lon Inputs -->
     <div class="latlon-inputs">
@@ -101,8 +104,9 @@ export default defineComponent({
     const minPrice = ref<number | null>(null)
     const maxPrice = ref<number | null>(null)
     const capacity = ref<number | null>(null)
-    const lat = ref(123)
-    const lon = ref(789)
+    const userId = ref<number | null>(null)
+    const lat = ref(41)
+    const lon = ref(29)
 
     const fetchCars = async () => {
       let url = ''
@@ -137,8 +141,11 @@ export default defineComponent({
     watch([selectedFilter, city, minPrice, maxPrice, capacity, lat, lon], fetchCars)
 
     const reserveCar = async (car: Car) => {
-      const payload = {
-        user_id: 0,
+      try {
+        if(userId.value === null) throw new Error('No User ID set')
+
+        const payload = {
+        user_id: userId.value,
         car_id: car.car_id,
         start_time: new Date().toISOString().slice(0, 19).replace('T', ' '),
         end_time: new Date(new Date().getTime() + 10*60000).toISOString().slice(0, 19).replace('T', ' '),
@@ -148,7 +155,6 @@ export default defineComponent({
         method_id: 0
       }
 
-      try {
         const res = await fetch('http://localhost:5000/reserve', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -181,7 +187,8 @@ export default defineComponent({
       maxPrice,
       capacity,
       lat,
-      lon
+      lon,
+      userId
     }
   },
 })

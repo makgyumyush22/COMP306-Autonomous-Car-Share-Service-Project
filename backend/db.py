@@ -6,4 +6,3 @@ conn = mysql.connector.connect(
     password="",  # <-- db password
     database="" # <-- db name
 )
-cursor = conn.cursor(dictionary=True)
